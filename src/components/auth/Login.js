@@ -5,6 +5,7 @@ import "./Auth.css"
 
 
 export const Login = () => {
+    // useRef is a hook provided by the React library that allows you to create a mutable reference to a value that persists across re-renders of a component. It is commonly used to access or modify DOM elements directly
     const username = useRef()
     const password = useRef()
     const invalidDialog = useRef()
