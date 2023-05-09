@@ -1,19 +1,25 @@
 import React, { useEffect, useState } from "react"
-import { getGames, deleteGame } from "../../managers/GameManager.js"
+import { getGames, deleteGame, getGameTypes } from "../../managers/GameManager.js"
 import { useNavigate } from "react-router-dom"
 
 export const GameList = (props) => {
   const [games, setGames] = useState([])
   const navigate = useNavigate()
+  const [selectedType, setSelectedType] = useState("")
+  const [gameTypes, setGameTypes] = useState([])
 
   useEffect(() => {
-    getGames().then(data => setGames(data))
+    getGames()
+      .then(data => setGames(data))
+  }, [])
+  useEffect(() => {
+    getGameTypes()
+      .then(data => setGameTypes(data))
   }, [])
 
 
   const handleDelete = (id) => {
     deleteGame(id).then(() => {
-      // Refresh game list after deletion
       getGames().then((data) => setGames(data))
     })
   }
@@ -21,6 +27,15 @@ export const GameList = (props) => {
   const handleEdit = (id) => {
     navigate(`/games/edit/${id}`)
   }
+
+  const handleTypeChange = (event) => {
+    setSelectedType(event.target.value)
+  };
+
+  const filteredGames = selectedType
+    ? games.filter((game) => game.game_type === parseInt(selectedType))
+    : games
+
 
   return (<>
     <article className="games">
@@ -30,9 +45,22 @@ export const GameList = (props) => {
         }}
       >Register New Game</button>
     </article>
+
     <article className="games pageBox">
+      <select value={selectedType} onChange={handleTypeChange}>
+        <option value="">All</option>
+        {gameTypes.map((type) => (
+          <option key={type.id} value={type.id}>
+            {type.label}
+          </option>
+        ))}
+      </select>
+    </article>
+
+    <article className="games pageBox">
+
       {
-        games.map(game => {
+        filteredGames.map(game => {
           return <section key={`game--${game.id}`} className="game itemBox">
             <h2><div className="game__title">{game.title} by {game.maker}</div></h2>
             <div className="game__players">{game.number_of_players} players needed</div>

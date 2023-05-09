@@ -60,5 +60,20 @@ export const deleteGame = (id) => {
       Authorization: `Token ${getToken()}`,
     }
   })
+    .then(response => {
+      if (response.status === 204) {
+        return Promise.resolve(); // No content to parse, resolve with an empty value
+      } else {
+        return response.json(); // Parse the response as JSON for other status codes
+      }
+    });
 }
 
+export const filterByGameType = (type) => {
+  return fetch(`http://localhost:8000/games?type=${type}`, {
+    headers: {
+      "Authorization": `Token ${getToken()}`
+    }
+  })
+    .then(response => response.json())
+}
